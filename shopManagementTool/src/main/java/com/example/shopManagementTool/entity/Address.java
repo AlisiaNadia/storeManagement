@@ -18,15 +18,15 @@ public class Address {
     private Long id;
 
     @Column(nullable = false)
-    String city;
+    private String city;
 
     @Column(nullable = false)
-    String country;
+    private String country;
 
     @Column(nullable = false)
-    String street;
+    private String street;
 
     @Column(nullable = false)
-    String number;
+    private String number;
 
 }
