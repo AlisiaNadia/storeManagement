@@ -71,7 +71,7 @@ public class ProductService {
         return new ResponseEntity<>(productDOList, HttpStatus.OK);
     }
 
-    public ResponseEntity<Product> validateAndUpdateProduct(Long id, Integer quantity) {
+    public ResponseEntity<Product> validateAndUpdateProductQuantity(Long id, Integer quantity) {
 
         if (quantity < 0 && id == null) {
             logger.atDebug().log("The product to be update contains invalid data.");
@@ -88,7 +88,30 @@ public class ProductService {
                 }
                 return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
             } catch (Exception e) {
-                logger.atError().addArgument(e).log("Unable to update the product. Reason: {}");
+                logger.atError().addArgument(e).log("Unable to update the product quantity. Reason: {}");
+                return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
+    }
+
+    public ResponseEntity<Product> validateAndUpdateProductPrice(Long id, Double price) {
+
+        if ((Double.isNaN(price) || price <= 0) && id == null) {
+            logger.atDebug().log("The product to be update contains invalid data.");
+            return new ResponseEntity<>(null, HttpStatus.NOT_ACCEPTABLE);
+        } else {
+            try {
+                Product product = productRepository.findById(id).map(productToBeUpdated -> {
+                    productToBeUpdated.setPrice(price);
+                    return productRepository.save(productToBeUpdated);
+                }).orElse(null);
+
+                if (product != null) {
+                    return ResponseEntity.ok(saveProduct(productConverter.convertProductBEToDO(product)));
+                }
+                return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            } catch (Exception e) {
+                logger.atError().addArgument(e).log("Unable to update the product price. Reason: {}");
                 return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
