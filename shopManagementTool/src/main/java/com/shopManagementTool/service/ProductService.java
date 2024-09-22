@@ -110,7 +110,7 @@ public class ProductService {
             try {
                 Product product = productRepository.findById(id).map(productToBeUpdated -> {
                     productToBeUpdated.setQuantity(quantity);
-                    return productRepository.ave(productToBeUpdated);
+                    return productRepository.save(productToBeUpdated);
                 }).orElse(null);
 
                 if (product != null) {
