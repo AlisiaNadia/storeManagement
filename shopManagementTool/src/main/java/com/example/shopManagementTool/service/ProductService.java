@@ -1,24 +1,63 @@
 package com.example.shopManagementTool.service;
 
+import com.example.shopManagementTool.convert.ProductConverter;
 import com.example.shopManagementTool.entity.Product;
 import com.example.shopManagementTool.entity.repository.ProductRepository;
+import com.example.shopManagementTool.inputData.ProductDO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 public class ProductService {
+    Logger logger = LoggerFactory.getLogger(ProductService.class);
 
     private final ProductRepository productRepository;
+    private final ProductConverter productConverter;
 
     @Autowired
-    public ProductService(ProductRepository productRepository) {
+    public ProductService(ProductRepository productRepository, ProductConverter productConverter) {
         this.productRepository = productRepository;
+        this.productConverter = productConverter;
     }
 
-    public Product saveProduct(Product product) {
-        return productRepository.save(product);
+    public ResponseEntity<Product> validateAndSaveProduct(ProductDO productDO) {
+        logger.atDebug().log("validateAndSaveProduct in ProductService");
+
+        if (containsIllegalsCharacters(productDO.getName())
+                && containsIllegalsCharacters(productDO.getDescription())
+                && (Double.isNaN(productDO.getPrice()) || productDO.getPrice() <= 0)
+                && productDO.getQuantity() <= 0) {
+
+            logger.atDebug().log("The new product to be saved contains invalid data");
+
+            return new ResponseEntity<>(null, HttpStatus.NOT_ACCEPTABLE);
+
+        } else {
+            if (saveProduct(productDO) != null) {
+                return ResponseEntity.ok(saveProduct(productDO));
+            }
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    public Product saveProduct(ProductDO productDO) {
+        logger.atDebug().log("checkAndSaveProduct in ProductService");
+
+        try {
+            Product product = productConverter.convertProductDOToBE(productDO);
+            logger.atInfo().log("Save new product");
+            return productRepository.save(product);
+        } catch (Exception e) {
+            logger.atError().addArgument(e).log("Unable to save a new product. Reason: {}");
+            return null;
+        }
     }
 
     public List<Product> getAllProducts() {
@@ -31,5 +70,11 @@ public class ProductService {
 
     public void deleteProduct(Long id) {
         productRepository.deleteById(id);
+    }
+
+    public boolean containsIllegalsCharacters(String toCheck) {
+        Pattern pattern = Pattern.compile("[~#@*+%{}<>\\[\\]|\"\\_^-]");
+        Matcher matcher = pattern.matcher(toCheck);
+        return matcher.find();
     }
 }
