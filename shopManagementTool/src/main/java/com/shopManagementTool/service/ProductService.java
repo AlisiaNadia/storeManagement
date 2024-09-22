@@ -4,11 +4,10 @@ import com.shopManagementTool.converter.ProductConverter;
 import com.shopManagementTool.entity.Product;
 import com.shopManagementTool.entity.repository.ProductRepository;
 import com.shopManagementTool.inputData.ProductDO;
+import com.shopManagementTool.inputData.ResponseDO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -19,6 +18,12 @@ import java.util.regex.Pattern;
 
 @Service
 public class ProductService {
+
+    private static final String SUCCESS = "success";
+    private static final String ERROR = "error";
+    private static final String INVALID_DATA = "invalid data";
+    private static final String NOT_FOUND = "not found";
+
     Logger logger = LoggerFactory.getLogger(ProductService.class);
 
     private final ProductRepository productRepository;
@@ -34,21 +39,21 @@ public class ProductService {
      * Method that validates if the productDO is valid and if yes it saves it
      *
      * @param productDO to be validated and saved
-     * @return ResponseEntity<Product>
+     * @return ResponseDO
      */
-    public ResponseEntity<Product> validateAndSaveProduct(ProductDO productDO) {
+    public ResponseDO validateAndSaveProduct(ProductDO productDO) {
         logger.atDebug().log("validateAndSaveProduct in ProductService.");
 
         if (!validateProduct(productDO)) {
             logger.atDebug().log("The new product to be saved contains invalid data.");
-            return new ResponseEntity<>(null, HttpStatus.NOT_ACCEPTABLE);
+            return new ResponseDO(null, INVALID_DATA);
 
         } else {
             Product product = saveProduct(productDO);
             if (product != null) {
-                return ResponseEntity.ok(product);
+                return new ResponseDO(productConverter.convertProductEntityToDO(product), SUCCESS);
             }
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseDO(null, ERROR);
         }
     }
 
@@ -74,24 +79,22 @@ public class ProductService {
     /**
      * Method that returns all the existing products
      *
-     * @return ResponseEntity<List<ProductDO>>
+     * @return <List<ProductDO>
      */
-    public ResponseEntity<List<ProductDO>> getAllProducts() {
+    public List<ProductDO> getAllProducts() {
         logger.atInfo().log("Get all products.");
         List<ProductDO> productDOList = new ArrayList<>();
         try {
             List<Product> productList = productRepository.findAll();
             if (!CollectionUtils.isEmpty(productList)) {
                 productList.forEach(product -> productDOList.add(productConverter.convertProductEntityToDO(product)));
-            } else {
-                return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
             }
         } catch (Exception e) {
             logger.atError().addArgument(e).log("Unable to get the product list. Reason: {}");
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+            return null;
 
         }
-        return new ResponseEntity<>(productDOList, HttpStatus.OK);
+        return productDOList;
     }
 
     /**
@@ -99,27 +102,26 @@ public class ProductService {
      *
      * @param id the id of the product to be updated
      * @param quantity the updated quantity
-     * @return ResponseEntity<Product>
+     * @return ResponseDO
      */
-    public ResponseEntity<ProductDO> validateAndUpdateProductQuantity(Long id, Integer quantity) {
+    public ResponseDO validateAndUpdateProductQuantity(Long id, Integer quantity) {
 
         if (quantity < 0 && id == null) {
             logger.atDebug().log("The product to be update contains invalid data.");
-            return new ResponseEntity<>(null, HttpStatus.NOT_ACCEPTABLE);
+            return new ResponseDO(null, INVALID_DATA);
         } else {
             try {
                 Product product = productRepository.findById(id).map(productToBeUpdated -> {
                     productToBeUpdated.setQuantity(quantity);
                     return productRepository.save(productToBeUpdated);
                 }).orElse(null);
-
                 if (product != null) {
-                    return ResponseEntity.ok(productConverter.convertProductEntityToDO(product));
+                    return new ResponseDO(productConverter.convertProductEntityToDO(product), SUCCESS);
                 }
-                return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+                return new ResponseDO(null, NOT_FOUND);
             } catch (Exception e) {
                 logger.atError().addArgument(e).log("Unable to update the product quantity. Reason: {}");
-                return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+                return new ResponseDO(null, ERROR);
             }
         }
     }
@@ -129,13 +131,13 @@ public class ProductService {
      *
      * @param id the id of the product to be updated
      * @param price the updated price
-     * @return ResponseEntity<Product>
+     * @return ResponseDO
      */
-    public ResponseEntity<ProductDO> validateAndUpdateProductPrice(Long id, Double price) {
+    public ResponseDO validateAndUpdateProductPrice(Long id, Double price) {
 
         if ((Double.isNaN(price) || price <= 0) && id == null) {
             logger.atDebug().log("The product to be update contains invalid data.");
-            return new ResponseEntity<>(null, HttpStatus.NOT_ACCEPTABLE);
+            return new ResponseDO(null, INVALID_DATA);
         } else {
             try {
                 Product product = productRepository.findById(id).map(productToBeUpdated -> {
@@ -144,12 +146,12 @@ public class ProductService {
                 }).orElse(null);
 
                 if (product != null) {
-                    return ResponseEntity.ok(productConverter.convertProductEntityToDO(product));
+                    return new ResponseDO(productConverter.convertProductEntityToDO(product), SUCCESS);
                 }
-                return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+                return new ResponseDO(null, NOT_FOUND);
             } catch (Exception e) {
                 logger.atError().addArgument(e).log("Unable to update the product price. Reason: {}");
-                return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+                return new ResponseDO(null, ERROR);
             }
         }
     }
@@ -158,9 +160,9 @@ public class ProductService {
      * Method that deletes a product based on the id
      *
      * @param id the id of the product to be deleted
-     * @return ResponseEntity<Product>
+     * @return ResponseDO
      */
-    public ResponseEntity<Product> deleteProduct(Long id) {
+    public ResponseDO deleteProduct(Long id) {
         logger.atInfo().log("Delete the product.");
         try {
             if (productRepository.existsById(id)) {
@@ -169,9 +171,9 @@ public class ProductService {
             }
         } catch (Exception e) {
             logger.atError().addArgument(e).log("Unable to delete the product. Reason: {}");
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseDO(null, ERROR);
         }
-        return new ResponseEntity<>(null, HttpStatus.OK);
+        return new ResponseDO(null, SUCCESS);
     }
 
     /**
