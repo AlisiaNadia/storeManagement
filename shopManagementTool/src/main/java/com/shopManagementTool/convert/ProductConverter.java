@@ -4,7 +4,9 @@ import com.shopManagementTool.entity.Product;
 import com.shopManagementTool.inputData.ProductDO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
+@Component
 public class ProductConverter {
     Logger logger = LoggerFactory.getLogger(ProductConverter.class);
 

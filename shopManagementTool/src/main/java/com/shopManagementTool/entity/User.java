@@ -26,9 +26,8 @@ public class User {
     @Column(nullable = false)
     private String role;
 
-    @Column(nullable = false)
-    @OneToMany
+    @ManyToOne
     @JoinColumn(name = "address_id")
-    private Address adress;
+    private Address address;
 
 }

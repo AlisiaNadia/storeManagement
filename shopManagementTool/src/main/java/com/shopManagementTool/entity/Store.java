@@ -20,9 +20,8 @@ public class Store {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
     @OneToOne
-    @JoinColumn(name = "address_id")
+    @PrimaryKeyJoinColumn
     private Address address;
 
     @Column(nullable = false, name = "phone_number")
