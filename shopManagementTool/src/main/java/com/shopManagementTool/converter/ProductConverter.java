@@ -1,4 +1,4 @@
-package com.shopManagementTool.convert;
+package com.shopManagementTool.converter;
 
 import com.shopManagementTool.entity.Product;
 import com.shopManagementTool.inputData.ProductDO;

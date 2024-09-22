@@ -1,6 +1,6 @@
 package com.shopManagementTool.service;
 
-import com.shopManagementTool.convert.ProductConverter;
+import com.shopManagementTool.converter.ProductConverter;
 import com.shopManagementTool.entity.Product;
 import com.shopManagementTool.entity.repository.ProductRepository;
 import com.shopManagementTool.inputData.ProductDO;
