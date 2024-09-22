@@ -31,6 +31,11 @@ public class ProductController {
         return productService.getAllProducts();
     }
 
+    @PutMapping("/updateProductQuantity/{id}/{quantity}")
+    public ResponseEntity<Product> updateProductQuantity(@PathVariable Long id, @PathVariable Integer quantity) {
+        return productService.validateAndUpdateProduct(id, quantity);
+    }
+
     @DeleteMapping("/deleteProduct/{id}")
     public ResponseEntity<Product> deleteProduct(@PathVariable Long id) {
         return productService.deleteProduct(id);

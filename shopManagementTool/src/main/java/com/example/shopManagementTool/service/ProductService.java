@@ -32,17 +32,13 @@ public class ProductService {
     public ResponseEntity<Product> validateAndSaveProduct(ProductDO productDO) {
         logger.atDebug().log("validateAndSaveProduct in ProductService.");
 
-        if (containsIllegalsCharacters(productDO.getName())
-                && containsIllegalsCharacters(productDO.getDescription())
-                && (Double.isNaN(productDO.getPrice()) || productDO.getPrice() <= 0)
-                && productDO.getQuantity() <= 0) {
-
+        if (validateProduct(productDO)) {
             logger.atDebug().log("The new product to be saved contains invalid data.");
-
             return new ResponseEntity<>(null, HttpStatus.NOT_ACCEPTABLE);
 
         } else {
-            if (saveProduct(productDO) != null) {
+            Product product = saveProduct(productDO);
+            if (product != null) {
                 return ResponseEntity.ok(saveProduct(productDO));
             }
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -75,8 +71,27 @@ public class ProductService {
         return new ResponseEntity<>(productDOList, HttpStatus.OK);
     }
 
-    public Product updateProduct(Product updatedProduct) {
-        return updatedProduct;
+    public ResponseEntity<Product> validateAndUpdateProduct(Long id, Integer quantity) {
+
+        if (quantity < 0 && id == null) {
+            logger.atDebug().log("The product to be update contains invalid data.");
+            return new ResponseEntity<>(null, HttpStatus.NOT_ACCEPTABLE);
+        } else {
+            try {
+                Product product = productRepository.findById(id).map(productToBeUpdated -> {
+                    productToBeUpdated.setQuantity(quantity);
+                    return productRepository.save(productToBeUpdated);
+                }).orElse(null);
+
+                if (product != null) {
+                    return ResponseEntity.ok(saveProduct(productConverter.convertProductBEToDO(product)));
+                }
+                return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            } catch (Exception e) {
+                logger.atError().addArgument(e).log("Unable to update the product. Reason: {}");
+                return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
     }
 
     public ResponseEntity<Product> deleteProduct(Long id) {
@@ -91,6 +106,13 @@ public class ProductService {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<>(null, HttpStatus.OK);
+    }
+
+    public boolean validateProduct(ProductDO productDO) {
+        return (containsIllegalsCharacters(productDO.getName())
+                && containsIllegalsCharacters(productDO.getDescription())
+                && (Double.isNaN(productDO.getPrice()) || productDO.getPrice() <= 0)
+                && productDO.getQuantity() < 0);
     }
 
     public boolean containsIllegalsCharacters(String toCheck) {
