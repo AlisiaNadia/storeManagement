@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -60,8 +61,18 @@ public class ProductService {
         }
     }
 
-    public List<Product> getAllProducts() {
-        return productRepository.findAll();
+    public ResponseEntity<List<ProductDO>> getAllProducts() {
+        logger.atInfo().log("Get all products.");
+        List<ProductDO> productDOList = new ArrayList<>();
+        try {
+            List<Product> productList = productRepository.findAll();
+            productList.forEach(product -> productDOList.add(productConverter.convertProductBEToDO(product)));
+        } catch (Exception e) {
+            logger.atError().addArgument(e).log("Unable to get the product list. Reason: {}");
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+
+        }
+        return new ResponseEntity<>(productDOList, HttpStatus.OK);
     }
 
     public Product updateProduct(Product updatedProduct) {
@@ -76,7 +87,7 @@ public class ProductService {
                 productRepository.deleteById(id);
             }
         } catch (Exception e) {
-            logger.atError().addArgument(e).log("Unable to delete tge product. Reason: {}");
+            logger.atError().addArgument(e).log("Unable to delete the product. Reason: {}");
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<>(null, HttpStatus.OK);

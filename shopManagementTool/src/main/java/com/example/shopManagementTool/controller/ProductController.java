@@ -26,8 +26,8 @@ public class ProductController {
         return productService.validateAndSaveProduct(productDO);
     }
 
-    @GetMapping("/products")
-    public List<Product> getAllProducts() {
+    @GetMapping("/getAllProducts")
+    public ResponseEntity<List<ProductDO>> getAllProducts() {
         return productService.getAllProducts();
     }
 
