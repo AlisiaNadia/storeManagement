@@ -64,17 +64,12 @@ public class ProductController {
 
     private ResponseEntity<ProductDO> prepareResponseEntity(ResponseDO responseDO) {
 
-        switch (responseDO.getStatus()) {
-            case SUCCESS:
-                return new ResponseEntity<>(responseDO.getProductDO(), HttpStatus.OK);
-            case ERROR:
-                return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-            case INVALID_DATA:
-                return new ResponseEntity<>(null, HttpStatus.NOT_ACCEPTABLE);
-            case NOT_FOUND:
-                return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-            default:
-                return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
-        }
+        return switch (responseDO.getStatus()) {
+            case SUCCESS -> new ResponseEntity<>(responseDO.getProductDO(), HttpStatus.OK);
+            case ERROR -> new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+            case INVALID_DATA -> new ResponseEntity<>(null, HttpStatus.NOT_ACCEPTABLE);
+            case NOT_FOUND -> new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            default -> new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        };
     }
 }
