@@ -1,4 +1,4 @@
-package com.example.shopManagementTool;
+package com.shopManagementTool;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

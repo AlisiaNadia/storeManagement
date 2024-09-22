@@ -1,6 +1,6 @@
-package com.example.shopManagementTool.entity.repository;
+package com.shopManagementTool.entity.repository;
 
-import com.example.shopManagementTool.entity.Address;
+import com.shopManagementTool.entity.Address;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,4 +1,4 @@
-package com.example.shopManagementTool.inputData;
+package com.shopManagementTool.inputData;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,12 +9,12 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProductDO {
+public class AddressDO {
 
     private Long id;
-    private String name;
-    private Double price;
-    private String description;
-    private Integer quantity;
+    private String city;
+    private String country;
+    private String street;
+    private String number;
 
 }

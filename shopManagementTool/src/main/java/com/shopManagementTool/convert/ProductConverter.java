@@ -1,8 +1,7 @@
-package com.example.shopManagementTool.convert;
+package com.shopManagementTool.convert;
 
-import com.example.shopManagementTool.entity.Product;
-import com.example.shopManagementTool.inputData.ProductDO;
-import com.example.shopManagementTool.service.ProductService;
+import com.shopManagementTool.entity.Product;
+import com.shopManagementTool.inputData.ProductDO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

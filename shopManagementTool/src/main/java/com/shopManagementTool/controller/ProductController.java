@@ -1,10 +1,9 @@
-package com.example.shopManagementTool.controller;
+package com.shopManagementTool.controller;
 
-import com.example.shopManagementTool.entity.Product;
-import com.example.shopManagementTool.inputData.ProductDO;
-import com.example.shopManagementTool.service.ProductService;
+import com.shopManagementTool.entity.Product;
+import com.shopManagementTool.inputData.ProductDO;
+import com.shopManagementTool.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

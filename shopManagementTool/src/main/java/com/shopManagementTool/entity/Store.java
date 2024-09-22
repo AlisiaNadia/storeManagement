@@ -1,4 +1,4 @@
-package com.example.shopManagementTool.entity;
+package com.shopManagementTool.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -9,8 +9,8 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @Entity
-@Table(name = "t_address")
-public class Address {
+@Table(name = "t_store")
+public class Store {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,15 +18,15 @@ public class Address {
     private Long id;
 
     @Column(nullable = false)
-    private String city;
+    private String name;
 
     @Column(nullable = false)
-    private String country;
+    @OneToOne
+    @JoinColumn(name = "address_id")
+    private Address address;
 
-    @Column(nullable = false)
-    private String street;
+    @Column(nullable = false, name = "phone_number")
+    private String phoneNumber;
 
-    @Column(nullable = false)
-    private String number;
 
 }

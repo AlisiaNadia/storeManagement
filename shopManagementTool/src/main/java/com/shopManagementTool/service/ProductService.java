@@ -1,9 +1,9 @@
-package com.example.shopManagementTool.service;
+package com.shopManagementTool.service;
 
-import com.example.shopManagementTool.convert.ProductConverter;
-import com.example.shopManagementTool.entity.Product;
-import com.example.shopManagementTool.entity.repository.ProductRepository;
-import com.example.shopManagementTool.inputData.ProductDO;
+import com.shopManagementTool.convert.ProductConverter;
+import com.shopManagementTool.entity.Product;
+import com.shopManagementTool.entity.repository.ProductRepository;
+import com.shopManagementTool.inputData.ProductDO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

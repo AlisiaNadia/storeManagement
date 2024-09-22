@@ -1,4 +1,4 @@
-package com.example.shopManagementTool.inputData;
+package com.shopManagementTool.inputData;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
