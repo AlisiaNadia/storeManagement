@@ -31,12 +31,12 @@ public class ProductController {
     }
 
     @PutMapping("/updateProductQuantity/{id}/{quantity}")
-    public ResponseEntity<Product> updateProductQuantity(@PathVariable Long id, @PathVariable Integer quantity) {
+    public ResponseEntity<ProductDO> updateProductQuantity(@PathVariable Long id, @PathVariable Integer quantity) {
         return productService.validateAndUpdateProductQuantity(id, quantity);
     }
 
-    @PutMapping("/updateProductQuantity/{id}/{price}")
-    public ResponseEntity<Product> updateProductPrice(@PathVariable Long id, @PathVariable Double price) {
+    @PutMapping("/updateProductPrice/{id}/{price}")
+    public ResponseEntity<ProductDO> updateProductPrice(@PathVariable Long id, @PathVariable Double price) {
         return productService.validateAndUpdateProductPrice(id, price);
     }
 

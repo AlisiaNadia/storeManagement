@@ -10,18 +10,29 @@ import org.springframework.stereotype.Component;
 public class ProductConverter {
     Logger logger = LoggerFactory.getLogger(ProductConverter.class);
 
-    public Product convertProductDOToBE(ProductDO productDO) {
+    /**
+     * Converts from a productDO to a product entity
+     *
+     * @param productDO the productDO to be converted
+     * @return Product
+     */
+    public Product convertProductDOToEntity(ProductDO productDO) {
 
         logger.atInfo().log("Convert product DO to BE.");
-        Product product = new Product();
-        product.setName(productDO.getName());
-        product.setDescription(productDO.getDescription());
-        product.setQuantity(productDO.getQuantity());
-        product.setPrice(productDO.getPrice());
-        return product;
+        return new Product(productDO.getId(),
+                productDO.getName(),
+                productDO.getPrice(),
+                productDO.getDescription(),
+                productDO.getQuantity());
     }
 
-    public ProductDO convertProductBEToDO(Product product) {
+    /**
+     * Converts from a product entity to a productDO
+     *
+     * @param product the product entity to be converted
+     * @return ProductDO
+     */
+    public ProductDO convertProductEntityToDO(Product product) {
         logger.atInfo().log("Convert product BE to DO.");
         return new ProductDO(product.getId(),
                 product.getName(),

@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @Entity
-@Table(name = "t_user")
+@Table(name = "user")
 public class User {
 
     @Id
@@ -26,8 +26,8 @@ public class User {
     @Column(nullable = false)
     private String role;
 
-    @ManyToOne
-    @JoinColumn(name = "address_id")
+    @OneToOne
+    @PrimaryKeyJoinColumn
     private Address address;
 
 }
