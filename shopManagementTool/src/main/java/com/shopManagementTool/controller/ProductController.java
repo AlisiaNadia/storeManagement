@@ -41,10 +41,6 @@ public class ProductController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        if (productDOList.isEmpty()) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-        }
-
         return  new ResponseEntity<>(productDOList, HttpStatus.OK);
     }
 
